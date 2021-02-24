@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import 'leaflet/dist/leaflet.css';
 
 Vue.use(Vuex)
 
