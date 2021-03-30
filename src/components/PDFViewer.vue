@@ -1,12 +1,21 @@
 <template>
   <v-container>
-      <v-card height="500px">
-    <v-btn :disabled="selectedGeom.type === 'Null'" color="primary" @click="createMap()"> Создать карту </v-btn>
-    <!-- <div>{{ this.selectedGeom.type }}</div> -->
-    <v-btn v-show="link" :href="link" target="_blank">Load result</v-btn>
-    <v-overlay :value="processing">
-      <v-progress-circular indeterminate color="green"></v-progress-circular>
-    </v-overlay>
+    <v-card height="500px">
+        <v-btn
+          :disabled="selectedGeom.type === 'Null'"
+          color="primary"
+          @click="createMap()"
+        >
+          Создать карту
+        </v-btn>
+        <!-- <div>{{ this.selectedGeom.type }}</div> -->
+        <v-btn v-show="link" :href="link" target="_blank">Load result</v-btn>
+        <v-overlay :value="processing" :z-index=100000>
+          <v-progress-circular
+            indeterminate
+            color="blue"
+          ></v-progress-circular>
+        </v-overlay>
     </v-card>
   </v-container>
 </template>
@@ -47,9 +56,7 @@ export default {
           if (statusdata.jobStatus !== "esriJobSucceeded") {
             this.startJob(url);
             this.processing = true;
-            //spin.setAttribute("style", "display: block")
           } else {
-            //spin.setAttribute("style", "display: none");
             this.getpdfUrl(url);
             this.processing = false;
           }
@@ -63,10 +70,10 @@ export default {
         });
     }
   },
-  watch:{
-      selectedGeom: function () {
-          this.link = '';
-      }
+  watch: {
+    selectedGeom: function() {
+      this.link = "";
+    }
   }
 };
 </script>
