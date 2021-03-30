@@ -9,14 +9,17 @@
 
 <script>
 // import L from 'leaflet'
+
 import { LMap, LTileLayer, LGeoJson } from "vue2-leaflet";
 import { testLayer } from "../assets/sampleGeojson";
+import { mapMutations } from "vuex";
 //console.log(JSON.parse(sampleJSON))
 //const  hydroPosts = hydroPosts
 export default {
   data: () => ({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    data: testLayer
+    data: testLayer,
+    processing: false
   }),
   computed: {
     optionsGeoJSON() {
@@ -29,15 +32,18 @@ export default {
       return (feature, layer) => {
         layer.on({
           click: e => {
-            console.log(e.target.feature.geometry);
-            // layer.openPopup("Hi!");
-            // e.layer.setStyle({
-            //   weight: 5
-            // })
+            e.target.feature.geometry.coordinates;
+            this.SET_SELECTED_GEOM(e.target.feature.geometry);
+            //console.log(wkt.stringify(e.target.feature.geometry));
+           
           }
         });
       };
     }
+  },
+  methods: {
+    ...mapMutations(["SET_SELECTED_GEOM"]),
+
   },
   components: { LMap, LTileLayer, LGeoJson }
 };

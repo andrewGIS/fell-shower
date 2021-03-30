@@ -6,8 +6,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    selectedGeom: {type:"Null"}
   },
   mutations: {
+    SET_SELECTED_GEOM (state, payload)  {
+      state.selectedGeom = payload
+    }
   },
   actions: {
   },

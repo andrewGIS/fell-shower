@@ -38,19 +38,28 @@
     </v-app-bar>
 
     <v-main>
-      <vue-map></vue-map>
+      <v-row>
+        <v-col>
+          <vue-map></vue-map>
+        </v-col>
+        <v-col>
+          <pdf-viewer></pdf-viewer>
+        </v-col>
+      </v-row>
     </v-main>
   </v-app>
 </template>
 
 <script>
 import VueMap from './components/Map';
+import PdfViewer from './components/PDFViewer';
 
 export default {
   name: 'App',
 
   components: {
     VueMap,
+    PdfViewer
   },
 
   data: () => ({
