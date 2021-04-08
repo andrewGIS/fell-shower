@@ -43,7 +43,8 @@
           <vue-map></vue-map>
         </v-col>
         <v-col>
-          <pdf-viewer></pdf-viewer>
+          <viewer></viewer>
+          <predict-chooser></predict-chooser>
         </v-col>
       </v-row>
     </v-main>
@@ -52,14 +53,16 @@
 
 <script>
 import VueMap from './components/Map';
-import PdfViewer from './components/PDFViewer';
+import Viewer from './components/Viewer';
+import PredictChooser from './components/PredictChooser';
 
 export default {
   name: 'App',
 
   components: {
     VueMap,
-    PdfViewer
+    Viewer,
+    PredictChooser
   },
 
   data: () => ({

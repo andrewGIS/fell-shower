@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card height="500px">
+      
         <v-btn
           :disabled="selectedGeom.type === 'Null'"
           color="primary"
@@ -16,7 +16,6 @@
             color="blue"
           ></v-progress-circular>
         </v-overlay>
-    </v-card>
   </v-container>
 </template>
 
