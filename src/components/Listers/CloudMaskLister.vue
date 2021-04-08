@@ -12,15 +12,18 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex'
 export default {
   data: () => ({
     masks: [],
     selectedMask: null
   }),
   methods: {
+    ...mapActions({
+      updateCloudMask: 'LOAD_CLOUD_MASK'
+    }),
     getPredictList() {
-      console.log(process.env.API_BASE);
-      fetch("http://127.0.0.1:5000/cloudmasks")
+      fetch(`${process.env.VUE_APP_API_BASE}/cloudmasks`)
         .then(resp => resp.json())
         .then(data => this.masks = data.masks)
         .catch(error => console.log(error));
@@ -37,6 +40,11 @@ export default {
   },
   mounted() {
     this.predicts = this.getPredictList()
+  },
+  watch:{
+    selectedMask: function(cloudMaskID){
+        this.updateCloudMask(cloudMaskID);
+    }
   }
 };
 </script>

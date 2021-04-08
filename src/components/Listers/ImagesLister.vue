@@ -19,8 +19,7 @@ export default {
   }),
   methods: {
     getImageList() {
-      console.log(process.env.API_BASE);
-      fetch("http://127.0.0.1:5000/images")
+      fetch(`${process.env.VUE_APP_API_BASE}/images`)
         .then(resp => resp.json())
         .then(data => (this.images = data.images))
         .catch(error => console.log(error));

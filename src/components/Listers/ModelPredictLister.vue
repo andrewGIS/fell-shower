@@ -19,8 +19,7 @@ export default {
   }),
   methods: {
     getPredictList() {
-      console.log(process.env.API_BASE);
-      fetch("http://127.0.0.1:5000/predicts")
+      fetch(`${process.env.VUE_APP_API_BASE}/predicts`)
         .then(resp => resp.json())
         .then(data => this.predicts = data.predicts)
         .catch(error => console.log(error));

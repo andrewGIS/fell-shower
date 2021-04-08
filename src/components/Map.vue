@@ -2,7 +2,8 @@
   <v-container fluid style="height: 86vh">
     <l-map :center="[59, 59]" :zoom="6">
       <l-tile-layer :url="url"></l-tile-layer>
-      <l-geo-json :geojson="data" :options="optionsGeoJSON"></l-geo-json>
+      <!-- <l-geo-json :geojson="data" :options="optionsGeoJSON"></l-geo-json> -->
+      <l-geo-json v-if="selectedCoudMask" :geojson="selectedCoudMask" :options="optionsGeoJSON"></l-geo-json>
     </l-map>
   </v-container>
 </template>
@@ -12,7 +13,7 @@
 
 import { LMap, LTileLayer, LGeoJson } from "vue2-leaflet";
 import { testLayer } from "../assets/sampleGeojson";
-import { mapMutations } from "vuex";
+import { mapMutations} from "vuex";
 //console.log(JSON.parse(sampleJSON))
 //const  hydroPosts = hydroPosts
 export default {
@@ -24,7 +25,6 @@ export default {
   computed: {
     optionsGeoJSON() {
       return {
-        pointToLayer: this.pointToLayer,
         onEachFeature: this.onEachFeature
       };
     },
@@ -39,6 +39,9 @@ export default {
           }
         });
       };
+    },
+    selectedCoudMask(){
+      return this.$store.state.cloudMaskGeoJSON
     }
   },
   methods: {
