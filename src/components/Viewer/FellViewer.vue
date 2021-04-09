@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-card height="200px">
-        <l-map :options="options" :bounds="bounds">
+        <l-map v-if="selectedGeom !== null" :options="options" :bounds="bounds">
           <l-polygon :lat-lngs="selectedTransformed"></l-polygon>
           <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"></l-tile-layer>
         </l-map>
@@ -40,25 +40,36 @@ export default {
     selectedGeom() {
       return this.$store.state.selectedGeom;
     },
+    selectedPredictID() {
+      return this.$store.state.predictID.replace('.geojson', '');
+    },
+    oldImgID() {
+      let idx = this.selectedPredictID.search("_S2")
+      return this.selectedPredictID.slice(0, idx);
+    },
+    newImgID() {
+      let idx = this.selectedPredictID.search("_S2")
+      // + 1 for sckip _ string. It is for contacenate of two images
+      return this.selectedPredictID.slice(idx+1);
+    },
     selectedTransformed() {
         // Strange behavior of leaflet for display polygon x y need to flipped. But init polygon
         // from native leaflet event
-        if (this.selectedGeom){
+        if (this.selectedGeom !== null){
             return this.selectedGeom.coordinates[0].map(coordinate => [coordinate[1],coordinate[0]])
         } else {
-            return null
+            return [[0,0],[0,0],[0,0],[0,0]]
         }
     },
     bounds(){
-        if (this.selectedGeom.coordinates){
+        if (this.selectedGeom !== null){
             let ymax = Math.max(...this.selectedGeom.coordinates[0].map(coordinate => coordinate[0]))
             let ymin = Math.min(...this.selectedGeom.coordinates[0].map(coordinate => coordinate[0]))
             let xmax = Math.max(...this.selectedGeom.coordinates[0].map(coordinate => coordinate[1]))
             let xmin = Math.min(...this.selectedGeom.coordinates[0].map(coordinate => coordinate[1]))
-            //return L.latLngBounds([[50, 40], [60, 50]])[xmax, xmin, ymax, ymin]
             return L.latLngBounds([[xmin, ymin], [xmax, ymax]])
         } else {
-            return [0,0,0,0]
+            return [[0,0],[0,0]]
         }
     }
   },

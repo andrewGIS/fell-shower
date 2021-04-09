@@ -6,9 +6,10 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    selectedGeom: {type:"Null"},
+    selectedGeom: null,
     cloudMaskGeoJSON: null,
-    predictedGeoJSON: null
+    predictedGeoJSON: null,
+    predictID: null
   },
   mutations: {
     SET_SELECTED_GEOM (state, payload)  {
@@ -19,6 +20,9 @@ export default new Vuex.Store({
     },
     SET_PREDICT (state, payload)  {
       state.predictedGeoJSON = payload
+    },
+    SET_PREDICT_ID (state, payload)  {
+      state.predictID = payload
     },
   },
   actions: {
@@ -39,10 +43,12 @@ export default new Vuex.Store({
         .then(response => { return response.json()})
         .then(data => {
           commit('SET_PREDICT', data)
+          commit('SET_PREDICT_ID', predictID)
         })
         return
       }
       commit('SET_PREDICT', null)
+      commit('SET_PREDICT_ID', null)
     },
     RUN_PREDICT: async ({ commit }, data) => {
       await fetch(`${process.env.VUE_APP_API_BASE}/makepredict?oldImg=${data.oldImg}&newImg=${data.newImg}`)
