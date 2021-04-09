@@ -9,7 +9,7 @@
       <v-tabs-items v-model="tab">
         <v-tab-item :key="'Просмотр изменений'">
           <v-card flat>
-            Просмотр изменений
+            <fell-viewer></fell-viewer>
           </v-card>
         </v-tab-item>
         <v-tab-item :key="'Создание карты'">
@@ -25,13 +25,15 @@
 
 <script>
 import PdfMaker from "./Viewer/PdfMaker";
+import FellViewer from './Viewer/FellViewer.vue';
 
 export default {
   data: () => ({
     tab: null,
   }),
   components: {
-    PdfMaker
+    PdfMaker,
+    FellViewer
   }
 };
 </script>
