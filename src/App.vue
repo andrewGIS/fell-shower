@@ -42,7 +42,7 @@
         <v-col>
           <vue-map></vue-map>
         </v-col>
-        <v-col>
+        <v-col cols=6>
           <viewer></viewer>
           <predict-chooser></predict-chooser>
         </v-col>
