@@ -1,13 +1,16 @@
 <template>
   <v-container>
-    <v-checkbox
-      v-for="mask in masks"
-      :key="mask"
-      :label="beautifyName(mask)"
-      v-model="selectedMask"
-      :value="mask"
-    >
-    </v-checkbox>
+    <v-card :loading="loadingCard" flat>
+      <v-checkbox
+        :disabled="loadingCard"
+        v-for="mask in masks"
+        :key="mask"
+        :label="beautifyName(mask)"
+        v-model="selectedMask"
+        :value="mask"
+      >
+      </v-checkbox>
+    </v-card>
   </v-container>
 </template>
 
@@ -16,7 +19,8 @@ import {mapActions} from 'vuex'
 export default {
   data: () => ({
     masks: [],
-    selectedMask: null
+    selectedMask: null,
+    loadingCard: false
   }),
   methods: {
     ...mapActions({
@@ -34,16 +38,18 @@ export default {
          * 20180901T091932.SAFE_S2B_MSIL1C_20190203T074129_N0207_R092_T40VEL_20190203T093456.SAFE.geojson")
          * to date before date after
          */
-        //let splitted = name.split("_")
-        return `${name}`
+        let splitted = name.split("_")
+        return `${splitted[5]}_${splitted[2]}`
     }
   },
   mounted() {
     this.predicts = this.getPredictList()
   },
   watch:{
-    selectedMask: function(cloudMaskID){
-        this.updateCloudMask(cloudMaskID);
+    selectedMask: async function(cloudMaskID){
+        this.loadingCard = true;
+        await this.updateCloudMask(cloudMaskID);
+        this.loadingCard = false;
     }
   }
 };
