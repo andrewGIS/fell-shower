@@ -3,7 +3,6 @@
     <v-card height="40vh">
       <v-tabs v-model="tab">
         <v-tab>Просмотр изменений</v-tab>
-        <v-tab>Создание карты </v-tab>
       </v-tabs>
 
       <v-tabs-items v-model="tab">
@@ -12,19 +11,12 @@
             <fell-viewer></fell-viewer>
           </v-card>
         </v-tab-item>
-        <v-tab-item :key="'Создание карты'">
-          <v-card flat>
-            <pdf-maker></pdf-maker>
-          </v-card>
-        </v-tab-item>
       </v-tabs-items>
-      
     </v-card>
   </v-container>
 </template>
 
 <script>
-import PdfMaker from "./Viewer/PdfMaker";
 import FellViewer from './Viewer/FellViewer.vue';
 
 export default {
@@ -32,7 +24,6 @@ export default {
     tab: null,
   }),
   components: {
-    PdfMaker,
     FellViewer
   }
 };

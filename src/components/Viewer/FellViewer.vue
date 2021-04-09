@@ -22,12 +22,16 @@
         >{{ channel }}</v-checkbox
       >
     </v-row>
+    <v-row>
+      <pdf-maker></pdf-maker>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import L from 'leaflet';
 import { LMap, LTileLayer, LPolygon } from "vue2-leaflet";
+import PdfMaker from './PdfMaker.vue';
 export default {
   data: () => ({
     options:{
@@ -76,7 +80,8 @@ export default {
   components: {
     LMap,
     LPolygon,
-    LTileLayer
+    LTileLayer,
+    PdfMaker
   }
 };
 </script>
