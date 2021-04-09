@@ -12,12 +12,14 @@
 </template>
 
 <script>
+import {mapActions} from 'vuex'
 export default {
   data: () => ({
     predicts: [],
     selectedPredict: null
   }),
   methods: {
+    ...mapActions({setActivePredict: 'LOAD_PREDICT'}),
     getPredictList() {
       fetch(`${process.env.VUE_APP_API_BASE}/predicts`)
         .then(resp => resp.json())
@@ -36,6 +38,11 @@ export default {
   },
   mounted() {
     this.predicts = this.getPredictList()
+  },
+  watch:{
+    selectedPredict: function(selectedPredict){
+        this.setActivePredict(selectedPredict);
+    }
   }
 };
 </script>
