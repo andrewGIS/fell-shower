@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <v-card :loading="loadingCard" :disabled="loadingCard" flat>
     <v-checkbox
       v-for="predict in predicts"
       :key="predict"
@@ -8,17 +9,20 @@
       :value="predict"
     >
     </v-checkbox>
+    </v-card>
   </v-container>
 </template>
 
 <script>
-import {mapActions} from 'vuex'
+import {mapActions, mapMutations} from 'vuex'
 export default {
   data: () => ({
     predicts: [],
-    selectedPredict: null
+    selectedPredict: null,
+    loadingCard: false
   }),
   methods: {
+    ...mapMutations({setSelectedGeom:'SET_SELECTED_GEOM'}),
     ...mapActions({setActivePredict: 'LOAD_PREDICT'}),
     getPredictList() {
       fetch(`${process.env.VUE_APP_API_BASE}/predicts`)
@@ -40,8 +44,13 @@ export default {
     this.predicts = this.getPredictList()
   },
   watch:{
-    selectedPredict: function(selectedPredict){
-        this.setActivePredict(selectedPredict);
+    selectedPredict: async function(selectedPredict){
+      this.loadingCard = true;
+        await this.setActivePredict(selectedPredict);
+        if (selectedPredict === null){
+          this.setSelectedGeom(null);
+        }
+      this.loadingCard = false;
     }
   }
 };

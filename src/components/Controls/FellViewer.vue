@@ -1,34 +1,38 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col cols=4>
+    <v-alert
+      v-if="selectedGeom === null"
+      border="right"
+      colored-border
+      type="error"
+      elevation="2"
+    >
+      {{
+        "Выберите один из слоев с предсказанием модели и выберите объект в нем"
+      }}
+    </v-alert>
+    <v-row v-if="selectedGeom !== null">
+      <v-col cols="6">
         <v-card height="200px">
-          <l-map
-            v-if="selectedGeom !== null"
-            :options="options"
-            :bounds="bounds"
-          >
+          <l-map :options="options" :bounds.sync="mapBounds">
             <l-polygon :lat-lngs="selectedTransformed"></l-polygon>
-            <l-tile-layer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            ></l-tile-layer>
+            <l-image-overlay :url="srcOld" :bounds="overlaybounds"></l-image-overlay>
           </l-map>
         </v-card>
       </v-col>
-      <v-col cols=4>
+      <v-col cols="6">
         <v-card height="200px">
-          <v-img :src="srcOld"></v-img>
-        </v-card>
-      </v-col>
-      <v-col cols=4>
-        <v-card height="200px">
-          <v-img :src="srcNew"></v-img>
+          <l-map :options="options" :bounds.sync="mapBounds">
+            <l-polygon :lat-lngs="selectedTransformed"></l-polygon>
+            <l-image-overlay :url="srcNew" :bounds="overlaybounds"></l-image-overlay> 
+          </l-map>
         </v-card>
       </v-col>
       <v-col> </v-col>
       <v-col> </v-col>
     </v-row>
-    <v-row>
+    <v-row align="center">
+      Подложка
       <v-checkbox
         v-for="channel in channels"
         v-model="selectedChannel"
@@ -38,25 +42,30 @@
         >{{ channel }}</v-checkbox
       >
     </v-row>
-    <v-row>
+    <v-row v-if="selectedGeom !== null">
       <pdf-maker></pdf-maker>
     </v-row>
   </v-container>
 </template>
 
 <script>
+// TODO map sync destroyed when you navigate throw small map
 import L from "leaflet";
-import { LMap, LTileLayer, LPolygon } from "vue2-leaflet";
+import { LMap, LPolygon, LImageOverlay } from "vue2-leaflet";
 import PdfMaker from "./PdfMaker.vue";
 export default {
   data: () => ({
     options: {
-      zoomControl: false
+      zoomControl: false,
+      dragging: false
     },
-    selectedChannel: null,
+    selectedChannel: "TCI",
     channels: ["B04", "B08", "B11", "B12", "TCI"],
-    srcOld: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
-    srcNew: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    srcOld:
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+    srcNew:
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+    mapBounds: null,
   }),
   computed: {
     selectedGeom() {
@@ -82,16 +91,10 @@ export default {
           coordinate[1],
           coordinate[0]
         ]);
-      } else {
-        return [
-          [0, 0],
-          [0, 0],
-          [0, 0],
-          [0, 0]
-        ];
       }
+      return null;
     },
-    bounds() {
+    overlaybounds() {
       if (this.selectedGeom !== null) {
         let ymax = Math.max(
           ...this.selectedGeom.coordinates[0].map(coordinate => coordinate[0])
@@ -109,25 +112,21 @@ export default {
           [xmin, ymin],
           [xmax, ymax]
         ]);
-      } else {
-        return [
-          [0, 0],
-          [0, 0]
-        ];
       }
+      return null;
     }
   },
-  methods:{
-    getImagePart (leaflet_bounds, fldName, channel) {
+  methods: {
+    getImagePart(leaflet_bounds, fldName, channel) {
       // Stream reading was stolen from official WEB api docs
       return fetch(
-        `http://localhost:5000/get_image_part`
-        + `?imgFld=${fldName}`
-        + `&channel=${channel}`
-        + `&xmin=${leaflet_bounds._southWest.lng}`
-        + `&xmax=${leaflet_bounds._northEast.lng}`
-        + `&ymin=${leaflet_bounds._southWest.lat}`
-        + `&ymax=${leaflet_bounds._northEast.lat}`
+        `http://localhost:5000/get_image_part` +
+          `?imgFld=${fldName}` +
+          `&channel=${channel}` +
+          `&xmin=${leaflet_bounds._southWest.lng}` +
+          `&xmax=${leaflet_bounds._northEast.lng}` +
+          `&ymin=${leaflet_bounds._southWest.lat}` +
+          `&ymax=${leaflet_bounds._northEast.lat}`
       )
         .then(response => response.body)
         .then(rb => {
@@ -168,22 +167,62 @@ export default {
           //console.log(result);
           return URL.createObjectURL(result);
         });
-    }
+    },
+    async updateGeom() {
+
+        let ymax = Math.max(
+          ...this.selectedGeom.coordinates[0].map(coordinate => coordinate[0])
+        );
+        let ymin = Math.min(
+          ...this.selectedGeom.coordinates[0].map(coordinate => coordinate[0])
+        );
+        let xmax = Math.max(
+          ...this.selectedGeom.coordinates[0].map(coordinate => coordinate[1])
+        );
+        let xmin = Math.min(
+          ...this.selectedGeom.coordinates[0].map(coordinate => coordinate[1])
+        );
+
+        let bounds = L.latLngBounds([
+          [xmin, ymin],
+          [xmax, ymax]
+        ]);
+
+        this.mapBounds = bounds;
+        this.srcOld = await this.getImagePart(
+          bounds,
+          this.oldImgID,
+          this.selectedChannel
+        );
+        this.srcNew = await this.getImagePart(
+          bounds,
+          this.newImgID,
+          this.selectedChannel
+        );
+      }
   },
   watch: {
-    async bounds (val) {
-      this.srcOld = await this.getImagePart(val, this.oldImgID, this.selectedChannel)
-      this.srcNew = await this.getImagePart(val, this.newImgID, this.selectedChannel)
+    async selectedChannel(val) {
+      this.srcOld = await this.getImagePart(
+        this.overlaybounds,
+        this.oldImgID,
+        val
+      );
+      this.srcNew = await this.getImagePart(
+        this.overlaybounds,
+        this.newImgID,
+        val
+      );
     },
-    async selectedChannel (val) {
-      this.srcOld = await this.getImagePart(this.bounds, this.oldImgID, val)
-      this.srcNew = await this.getImagePart(this.bounds, this.newImgID, val)
+    selectedGeom(val){
+      if (val === null) return;
+      this.updateGeom(val);
     }
   },
   components: {
     LMap,
     LPolygon,
-    LTileLayer,
+    LImageOverlay,
     PdfMaker
   }
 };
