@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
+      <v-col cols=4>
         <v-card height="200px">
           <l-map
             v-if="selectedGeom !== null"
@@ -15,9 +15,14 @@
           </l-map>
         </v-card>
       </v-col>
-      <v-col>
+      <v-col cols=4>
         <v-card height="200px">
-          <v-img :src="src"></v-img>
+          <v-img :src="srcOld"></v-img>
+        </v-card>
+      </v-col>
+      <v-col cols=4>
+        <v-card height="200px">
+          <v-img :src="srcNew"></v-img>
         </v-card>
       </v-col>
       <v-col> </v-col>
@@ -50,8 +55,8 @@ export default {
     },
     selectedChannel: null,
     channels: ["B04", "B08", "B11", "B12", "TCI"],
-    src:
-      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    srcOld: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7",
+    srcNew: "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
   }),
   computed: {
     selectedGeom() {
@@ -112,11 +117,17 @@ export default {
       }
     }
   },
-  watch: {
-    bounds: function(val) {
-      // Stream reading will stole from official WEB api docs
-      fetch(
-        `http://localhost:5000/get_image_part?imgFld=S2B_MSIL1C_20190203T074129_N0207_R092_T40VEL_20190203T093456.SAFE&channel=TCI&xmin=${val._southWest.lng}&xmax=${val._northEast.lng}&ymin=${val._southWest.lat}&ymax=${val._northEast.lat}`
+  methods:{
+    getImagePart (leaflet_bounds, fldName, channel) {
+      // Stream reading was stolen from official WEB api docs
+      return fetch(
+        `http://localhost:5000/get_image_part`
+        + `?imgFld=${fldName}`
+        + `&channel=${channel}`
+        + `&xmin=${leaflet_bounds._southWest.lng}`
+        + `&xmax=${leaflet_bounds._northEast.lng}`
+        + `&ymin=${leaflet_bounds._southWest.lat}`
+        + `&ymax=${leaflet_bounds._northEast.lat}`
       )
         .then(response => response.body)
         .then(rb => {
@@ -130,7 +141,7 @@ export default {
                 reader.read().then(({ done, value }) => {
                   // If there is no more data to read
                   if (done) {
-                    console.log("done", done);
+                    // console.log("done", done);
                     controller.close();
                     return;
                   }
@@ -155,8 +166,18 @@ export default {
         .then(result => {
           // Do things with result
           //console.log(result);
-          this.src = URL.createObjectURL(result);
+          return URL.createObjectURL(result);
         });
+    }
+  },
+  watch: {
+    async bounds (val) {
+      this.srcOld = await this.getImagePart(val, this.oldImgID, this.selectedChannel)
+      this.srcNew = await this.getImagePart(val, this.newImgID, this.selectedChannel)
+    },
+    async selectedChannel (val) {
+      this.srcOld = await this.getImagePart(this.bounds, this.oldImgID, val)
+      this.srcNew = await this.getImagePart(this.bounds, this.newImgID, val)
     }
   },
   components: {

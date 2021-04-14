@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card height="40vh">
+    <v-card >
       <v-tabs v-model="tab">
         <v-tab>Просмотр изменений</v-tab>
       </v-tabs>
