@@ -43,8 +43,7 @@
           <vue-map></vue-map>
         </v-col>
         <v-col cols=6>
-          <viewer></viewer>
-          <predict-chooser></predict-chooser>
+          <controls></controls>
         </v-col>
       </v-row>
     </v-main>
@@ -53,16 +52,14 @@
 
 <script>
 import VueMap from './components/Map';
-import Viewer from './components/Viewer';
-import PredictChooser from './components/PredictChooser';
+import Controls from './components/Controls';
 
 export default {
   name: 'App',
 
   components: {
     VueMap,
-    Viewer,
-    PredictChooser
+    Controls
   },
 
   data: () => ({
