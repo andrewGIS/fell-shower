@@ -4,7 +4,7 @@
       <v-checkbox
         v-for="img in images"
         :key="img"
-        :label="img"
+        :label="beautifyName(img)"
         v-model="selectedImages"
         :value="img"
       >
@@ -97,6 +97,15 @@ export default {
      let month = date.slice(4,6)
      let day = date.slice(6,8)
      return new Date(year, month, day)
+    },
+    beautifyName(name){
+        /**
+         * Transfrom name of geojson ("S2A_MSIL1C_20180901T073611_N0206_R092_T40VEL_
+         * 20180901T091932.SAFE_S2B_MSIL1C_20190203T074129_N0207_R092_T40VEL_20190203T093456.SAFE.geojson")
+         * to date before date after
+         */
+        let splitted = name.split("_")
+        return `${splitted[5]}_${splitted[2]}`
     }
   },
   computed: {
@@ -111,6 +120,9 @@ export default {
         return "Для запуска расчета выберите снимки с одним идентификатором тайла (например T40VEL)";
       }
       return null;
+    },
+    tileIDS(){
+      return Array.from(new Set(this.images.map(img => img.split("_")[5])));
     }
   },
   mounted() {

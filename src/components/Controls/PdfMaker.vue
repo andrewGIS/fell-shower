@@ -1,15 +1,20 @@
 <template>
-  <v-container>
-      
-        <v-btn
-          :disabled="selectedGeom.type === 'Null'"
-          color="primary"
-          @click="createMap()"
-        >
-          Создать карту
-        </v-btn>
-        <!-- <div>{{ this.selectedGeom.type }}</div> -->
-        <v-btn v-show="link" :href="link" target="_blank">Load result</v-btn>
+  <v-container fluid >
+        <v-row>
+          <v-col cols=8>
+            <v-btn small
+              :disabled="selectedGeom.type === 'Null'"
+              color="primary"
+              @click="createMap()"
+            >
+              Создать карту c выбранным объектом
+            </v-btn>
+          </v-col>
+          <!-- <div>{{ this.selectedGeom.type }}</div> -->
+          <v-col cols=4>
+            <v-btn small v-show="link" :href="link" target="_blank">Загрузить результат</v-btn>
+          </v-col>
+        </v-row>
         <v-overlay :value="processing" :z-index=100000>
           <v-progress-circular
             indeterminate
