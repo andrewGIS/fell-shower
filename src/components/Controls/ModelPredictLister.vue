@@ -37,7 +37,7 @@ export default {
          * to date before date after
          */
         let splitted = name.split("_")
-        return `${splitted[2]}_${splitted[9]}`
+        return `${splitted[5]}_${splitted[2]}_${splitted[9]}`
     }
   },
   mounted() {
