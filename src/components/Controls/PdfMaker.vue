@@ -76,7 +76,7 @@ export default {
   },
   watch: {
     selectedGeom: function() {
-      this.link = "";
+      this.link = null;
     }
   }
 };
