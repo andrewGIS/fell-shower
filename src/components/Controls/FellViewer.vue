@@ -45,6 +45,9 @@
     <v-row v-if="selectedGeom !== null">
       <pdf-maker></pdf-maker>
     </v-row>
+          <v-alert style="margin-top:16px;" border="right" colored-border type="info" elevation="2">
+        На данной странице можно посмотреть результат работы модели по отдельному объекту. В качестве подложки можно использовать каналы спутника Sentinel - 2. (Выбраны наиболее информативные каналы для дешифрирования лесной растительности). Для выбранного полигона можно построить карту.
+      </v-alert>
   </v-container>
 </template>
 
