@@ -1,15 +1,30 @@
 <template>
   <v-container>
     <v-card flat height="100%">
-      <v-checkbox
-        v-for="img in images"
-        :key="img"
-        :label="beautifyName(img)"
-        v-model="selectedImages"
-        :value="img"
-      >
-      </v-checkbox>
+      <v-card-title>
+        Группы снимков доступные для анализа
+      </v-card-title>
+      <v-container>
+          <v-expansion-panels>
+            <v-expansion-panel v-for="(tileID,idx) in tileIDS" :key="tileID">
+              <v-expansion-panel-header>
+                Группа № {{idx +1}}: {{tileID}}
+              </v-expansion-panel-header>
+            <v-expansion-panel-content>
+                  <v-checkbox
+                    class="shrink mr-2"
+                    v-for="img in getImagesByTile(tileID)"
+                    :key="img"
+                    :label="beautifyName(img)"
+                    v-model="selectedImages"
+                    :value="img"
+                  >
+                  </v-checkbox>
+            </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
       <v-alert
+        style="margin-top:16px"
         v-if="error"
         border="right"
         colored-border
@@ -18,6 +33,8 @@
       >
         {{ this.error }}
       </v-alert>
+      </v-container>
+
       <v-card-actions>
         <v-container>
           <v-row>
@@ -106,6 +123,9 @@ export default {
          */
         let splitted = name.split("_")
         return `${splitted[5]}_${splitted[2]}`
+    },
+    getImagesByTile(tileID){
+      return this.images.filter(img => img.split("_")[5] === tileID)
     }
   },
   computed: {
@@ -114,15 +134,17 @@ export default {
     },
     error() {
       if (this.selectedImages.length != 2) {
-        return "Для запуска расчета выберите два снимка";
+        return "Для запуска расчета выберите два снимка из одной группы";
       }
       if (this.selectedTiles[0] != this.selectedTiles[1]) {
-        return "Для запуска расчета выберите снимки с одним идентификатором тайла (например T40VEL)";
+        return "Для запуска расчета выберите снимки из одной группы";
       }
       return null;
     },
     tileIDS(){
-      return Array.from(new Set(this.images.map(img => img.split("_")[5])));
+      if (!this.images) return;
+      let imagesIDS = this.images.map(img => img.split("_")[5]);
+      return Array.from(new Set(imagesIDS));
     }
   },
   mounted() {
@@ -130,6 +152,3 @@ export default {
   }
 };
 </script>
-
-<style>
-</style>
