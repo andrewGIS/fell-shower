@@ -4,11 +4,13 @@
       <l-tile-layer :url="url"></l-tile-layer>
       <!-- <l-geo-json :geojson="data" :options="optionsGeoJSON"></l-geo-json> -->
       <l-geo-json
+        ref="cloudLayer"
         v-if="selectedCoudMask"
         :geojson="selectedCoudMask"
         :options-style="cloudStyle"
       ></l-geo-json>
       <l-geo-json
+        ref="predictLayer"
         v-if="selectedPredict"
         :geojson="selectedPredict"
         :options="optionsPredictGeoJSON"
@@ -23,7 +25,7 @@
 </template>
 
 <script>
-import L from 'leaflet'
+import L from "leaflet";
 
 import { LMap, LTileLayer, LGeoJson, LPolygon } from "vue2-leaflet";
 import { testLayer } from "../assets/sampleGeojson";
@@ -59,7 +61,7 @@ export default {
           click: e => {
             this.SET_SELECTED_GEOM(e.target.feature.geometry);
             //e.stopImmediatePropagation()
-            L.DomEvent.stopPropagation(e)
+            L.DomEvent.stopPropagation(e);
             //console.log(wkt.stringify(e.target.feature.geometry));
           }
         });
@@ -74,7 +76,10 @@ export default {
           coordinate[0]
         ]);
       }
-      return [[0,0],[0,0]];
+      return [
+        [0, 0],
+        [0, 0]
+      ];
     },
     selectedGeom() {
       return this.$store.state.selectedGeom;
@@ -90,19 +95,34 @@ export default {
     ...mapMutations(["SET_SELECTED_GEOM"])
   },
   components: { LMap, LTileLayer, LGeoJson, LPolygon },
-  mounted () {
-  this.$nextTick(() => {
-    this.map = this.$refs.map.mapObject // work as expected
-    this.map.on('click', e => {
-      // TODO when clicked again on selected feature resets clicked
-      // if on clicked point no features from predict layer
-      // clear selceted feature highlight
-      if (e.target instanceof L.Map && this.selectedPredict){
-        this.SET_SELECTED_GEOM(null);
-      }
-    })
-  })
-},
+  mounted() {
+    this.$nextTick(() => {
+      this.map = this.$refs.map.mapObject; // work as expected
+      this.map.on("click", e => {
+        // TODO when clicked again on selected feature resets clicked
+        // if on clicked point no features from predict layer
+        // clear selceted feature highlight
+        if (e.target instanceof L.Map && this.selectedPredict) {
+          this.SET_SELECTED_GEOM(null);
+        }
+      });
+    });
+  },
+  watch:{
+    selectedCoudMask (val){
+      if (!val) return;
+      this.$nextTick(() => {
+        this.map.fitBounds(this.$refs.cloudLayer.mapObject.getBounds())
+      })
+      
+    },
+    selectedPredict (val){
+      if (!val) return;
+      this.$nextTick(() => {
+        this.map.fitBounds(this.$refs.predictLayer.mapObject.getBounds())
+      })
+    }
+  }
 };
 </script>
 
