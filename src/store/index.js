@@ -10,7 +10,8 @@ export default new Vuex.Store({
     cloudMaskGeoJSON: null,
     predictedGeoJSON: null,
     predictID: null,
-    activeTabIndex: null
+    activeTabIndex: null,
+    selectedChannel: "TCI"
   },
   mutations: {
     SET_SELECTED_GEOM (state, payload)  {
@@ -27,6 +28,9 @@ export default new Vuex.Store({
     },
     SET_ACTIVE_TAB_INDEX (state, payload)  {
       state.activeTabIndex = payload
+    },
+    SET_SELECTED_CHANNEL (state, payload)  {
+      state.selectedChannel = payload
     }
   },
   actions: {
