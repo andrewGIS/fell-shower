@@ -62,6 +62,8 @@ export default {
             this.SET_SELECTED_GEOM(e.target.feature.geometry);
             //e.stopImmediatePropagation()
             L.DomEvent.stopPropagation(e);
+            //TODO change number of tab to name of tab
+            this.SET_ACTIVE_TAB_INDEX(3);
             //console.log(wkt.stringify(e.target.feature.geometry));
           }
         });
@@ -92,7 +94,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations(["SET_SELECTED_GEOM"])
+    ...mapMutations(["SET_SELECTED_GEOM", "SET_ACTIVE_TAB_INDEX"])
   },
   components: { LMap, LTileLayer, LGeoJson, LPolygon },
   mounted() {

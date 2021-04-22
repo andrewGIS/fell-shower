@@ -9,7 +9,8 @@ export default new Vuex.Store({
     selectedGeom: null,
     cloudMaskGeoJSON: null,
     predictedGeoJSON: null,
-    predictID: null
+    predictID: null,
+    activeTabIndex: null
   },
   mutations: {
     SET_SELECTED_GEOM (state, payload)  {
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     SET_PREDICT_ID (state, payload)  {
       state.predictID = payload
     },
+    SET_ACTIVE_TAB_INDEX (state, payload)  {
+      state.activeTabIndex = payload
+    }
   },
   actions: {
     LOAD_CLOUD_MASK: async ({ commit }, cloudmaskID) => {
