@@ -24,7 +24,8 @@
             <model-predict-lister></model-predict-lister>
           </v-card>
         </v-tab-item>
-        <v-tab-item :key="'Просмотр изменений'">
+        <!-- eager attribute Need for acces to map before click on this tab-->
+        <v-tab-item :key="'Просмотр изменений'" eager>
           <v-card flat>
             <fell-viewer></fell-viewer>
           </v-card>
