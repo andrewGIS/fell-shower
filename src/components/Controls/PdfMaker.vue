@@ -3,7 +3,7 @@
         <v-row>
           <v-col cols=8>
             <v-btn small
-              :disabled="selectedGeom.type === 'Null'"
+              :disabled="selectedGeom === null"
               color="primary"
               @click="createMap()"
             >
