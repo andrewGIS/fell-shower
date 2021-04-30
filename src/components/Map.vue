@@ -28,14 +28,14 @@
 import L from "leaflet";
 
 import { LMap, LTileLayer, LGeoJson, LPolygon } from "vue2-leaflet";
-import { testLayer } from "../assets/sampleGeojson";
+//import { testLayer } from "../assets/sampleGeojson";
 import { mapMutations } from "vuex";
 //console.log(JSON.parse(sampleJSON))
 //const  hydroPosts = hydroPosts
 export default {
   data: () => ({
     url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    data: testLayer,
+    //data: testLayer,
     processing: false,
     map: null,
     test: true
