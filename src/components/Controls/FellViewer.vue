@@ -150,7 +150,7 @@ export default {
     getImagePart(leaflet_bounds, fldName, channel) {
       // Stream reading was stolen from official WEB api docs
       return fetch(
-        `http://localhost:5000/get_image_part` +
+        `${process.env.VUE_APP_API_BASE}/get_image_part` +
           `?imgFld=${fldName}` +
           `&channel=${channel}` +
           `&xmin=${leaflet_bounds._southWest.lng}` +
