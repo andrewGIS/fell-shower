@@ -12,6 +12,10 @@
       }}
     </v-alert>
     <v-row v-show="selectedGeom !== null">
+      <v-col align="center">Дата первого снимка  <b>{{oldImgDate}}</b></v-col>
+      <v-col align="center"> Дата второго снимка <b>{{newImgDate}}</b></v-col>
+    </v-row>
+    <v-row v-show="selectedGeom !== null">
       <v-col cols="6">
         <v-card height="400px">
           <l-map 
@@ -125,6 +129,16 @@ export default {
       // + 1 for sckip _ string. It is for contacenate of two images
       return this.selectedPredictID.slice(idx + 1);
     },
+    oldImgDate (){
+      // Get date from Vendor ID Sentinel - 2 
+      if (!this.oldImgID) return null;
+      return this.parseDate(this.oldImgID.split("_")[2].slice(0,8)).toLocaleDateString()
+    },
+    newImgDate (){
+      // Get date from Vendor ID Sentinel - 2 
+      if (!this.newImgID) return null;
+      return this.parseDate(this.newImgID.split("_")[2].slice(0,8)).toLocaleDateString()
+    },
     selectedTransformed() {
       // Strange behavior of leaflet for display polygon x y need to flipped. But init polygon
       // from native leaflet event
@@ -225,6 +239,14 @@ export default {
       this.loading = false;
 
       this.mapBounds = bounds;
+    },
+    parseDate(inString){
+      // Convert date in format YYYYMMDD to Date and return date
+      let y = inString.slice(0, 4)
+      let m = parseInt(inString.slice(4, 6)) - 1
+      let d = inString.slice(6, 8)
+      let date = new Date (y, m, d)
+      return date
     }
   },
   watch: {
